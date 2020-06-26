@@ -26,3 +26,9 @@ class telegram_bot():
         parser = cfg.ConfigParser()
         parser.read(config)
         return parser.get('credentials', 'token')
+
+    def error_msg(self):
+        msg_cfg =  "messages.cfg"
+        parser = cfg.ConfigParser()
+        parser.read(msg_cfg)
+        return parser.get('error', 'error_msg')

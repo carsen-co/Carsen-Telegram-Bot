@@ -24,12 +24,14 @@ class SEARCH():
             print(updates)
             updates = updates["result"]
             if updates:
+                messages = []
                 for item in updates:
                     try:
                         message = item["message"]["text"]
-                        return message
+                        messages.append(message)
                     except:
                         message = None
+                return messages[-1]
     
     def manufacturer(self, msg_cfg):
         parser = cfg.ConfigParser()
@@ -40,8 +42,8 @@ class SEARCH():
         parser = cfg.ConfigParser()
         parser.read(msg_cfg)
         return parser.get('search', 'model')
-    
-    def __init__(self, msg_cfg):
+
+    def __init__(self, msg_cfg):        
         from_user = item["message"]["from"]["id"]
         bot.send_message(self.manufacturer(msg_cfg), from_user)
         inp_make = self.input_wait(msg_cfg)
@@ -55,12 +57,6 @@ class SEARCH():
             if not inp_model == inp_make:
                 break
 
-        print(inp_make, inp_model)
-    
-def error_msg(msg_cfg):
-    parser = cfg.ConfigParser()
-    parser.read(msg_cfg)
-    return parser.get('error', 'error_msg')
 
 if __name__=='__main__':
     bot = telegram_bot("config.cfg")
@@ -83,8 +79,9 @@ if __name__=='__main__':
                     else:
                         reply = start_message(msg_cfg)
                         bot.send_message(reply, from_user)
+
                 except Exception as e:
                     print(e)
                     message = None
-                    reply = error_msg(msg_cfg)
+                    reply = bot.error_msg(msg_cfg)
                     bot.send_message(reply, from_user)
