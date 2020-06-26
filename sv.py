@@ -53,6 +53,8 @@ class SEARCH():
             if not inp_model == inp_make:
                 break
         
+        bot.send_message("Working, please wait...", from_user)
+
         chat_input = [inp_make, inp_model]
         for i in range(9):
             chat_input.append("")
@@ -69,13 +71,14 @@ class SEARCH():
         for ditem in data:
             for i in range(len(ditem)):
                 try:
-                    data_lists[i].append(float(ditem[i]))
+                    data_lists[i].append(ditem[i])
                 except:
                     data_lists.append([])
-                    data_lists[i].append(float(ditem[i]))
+                    data_lists[i].append(ditem[i])
 
         ind = data_lists[6].index(max(data_lists[6]))
         print(data_lists[0][ind])
+        bot.send_message("Here is the best listing I could find", from_user)
         bot.send_message(data_lists[0][ind], from_user)
         os.chdir(maindir)
 
@@ -88,12 +91,14 @@ if __name__=='__main__':
         print(updates)
         updates = updates["result"]
         if updates:
+            messages = []
             for item in updates:
                 update_id = item["update_id"]
                 from_user = item["message"]["from"]["id"]
                 try:
                     message = item["message"]["text"]
-                    if message.lower() == "search":
+                    messages.append(message)
+                    if messages[-1].lower() == "search":
                         thread = threading.Thread(target = SEARCH, args = ("messages.cfg",))
                         thread.start()
                         thread.join()
