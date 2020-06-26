@@ -1,20 +1,16 @@
 
+import os
+import csv
 import time
 import threading
 import configparser as cfg
+
+from search_module import search
 from telegram_bot import telegram_bot
 
 global msg_cfg
 msg_cfg =  "messages.cfg"
 
-def TEST_send_reply():
-    reply = "Got you, please wait"
-    return reply
-
-def start_message(msg_cfg):
-    parser = cfg.ConfigParser()
-    parser.read(msg_cfg)
-    return parser.get('firstmessage', 'fmsg')
 
 class SEARCH():
     
@@ -56,7 +52,32 @@ class SEARCH():
             time.sleep(1)
             if not inp_model == inp_make:
                 break
+        
+        chat_input = [inp_make, inp_model]
+        for i in range(9):
+            chat_input.append("")
+        filename = search(os.getcwd(), chat_input)
 
+        maindir = os.getcwd()
+        os.chdir("./csv files")
+        with open(filename, mode="r", newline='') as datafile:
+            datareader = csv.reader(datafile)
+            data = list(datareader)
+            data.pop(0)
+        
+        data_lists = []
+        for ditem in data:
+            for i in range(len(ditem)):
+                try:
+                    data_lists[i].append(float(ditem[i]))
+                except:
+                    data_lists.append([])
+                    data_lists[i].append(float(ditem[i]))
+
+        ind = data_lists[6].index(max(data_lists[6]))
+        print(data_lists[0][ind])
+        bot.send_message(data_lists[0][ind], from_user)
+        os.chdir(maindir)
 
 if __name__=='__main__':
     bot = telegram_bot("config.cfg")
@@ -77,11 +98,11 @@ if __name__=='__main__':
                         thread.start()
                         thread.join()
                     else:
-                        reply = start_message(msg_cfg)
+                        reply = bot.start_message()
                         bot.send_message(reply, from_user)
 
                 except Exception as e:
                     print(e)
                     message = None
-                    reply = bot.error_msg(msg_cfg)
+                    reply = bot.error_msg()
                     bot.send_message(reply, from_user)

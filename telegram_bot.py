@@ -27,8 +27,18 @@ class telegram_bot():
         parser.read(config)
         return parser.get('credentials', 'token')
 
+    def TEST_send_reply(self):
+        reply = "Got you, please wait"
+        return reply
+
     def error_msg(self):
         msg_cfg =  "messages.cfg"
         parser = cfg.ConfigParser()
         parser.read(msg_cfg)
         return parser.get('error', 'error_msg')
+
+    def start_message(self):
+        msg_cfg =  "messages.cfg"
+        parser = cfg.ConfigParser()
+        parser.read(msg_cfg)
+        return parser.get('firstmessage', 'fmsg')
