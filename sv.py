@@ -78,8 +78,9 @@ class SEARCH():
 
         ind = data_lists[6].index(max(data_lists[6]))
         print(data_lists[0][ind])
-        bot.send_message("Here is the best listing I could find", from_user)
-        bot.send_message(data_lists[0][ind], from_user)
+        bot.send_message("Here is the best listing I could find: "+data_lists[0][ind], from_user)
+
+        os.remove(filename)
         os.chdir(maindir)
 
 if __name__=='__main__':

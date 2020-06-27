@@ -59,7 +59,7 @@ def search(maindir, srcInput):
     # get links
     with open(linksFileName, mode="w") as linksFile:
         threads = []
-        for currentPage in range(20):
+        for currentPage in range(converted_pagesnr):
             threadNumber = "Thread " + str(currentPage)
             thread = threading.Thread(target = getCarLinksTemp, args = (threadNumber, currentURL, linksFile))
             threads.append(thread)
