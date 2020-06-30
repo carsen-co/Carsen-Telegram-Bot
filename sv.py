@@ -92,6 +92,7 @@ if __name__=='__main__':
         print(updates)
         updates = updates["result"]
         if updates:
+            stspam = 0
             messages = []
             for item in updates:
                 update_id = item["update_id"]
@@ -103,7 +104,8 @@ if __name__=='__main__':
                         thread = threading.Thread(target = SEARCH, args = ("messages.cfg",))
                         thread.start()
                         thread.join()
-                    else:
+                    elif stspam != 1:
+                        stspam = 1
                         reply = bot.start_message()
                         bot.send_message(reply, from_user)
 
