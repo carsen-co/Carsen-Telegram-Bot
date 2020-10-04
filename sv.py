@@ -3,6 +3,7 @@ import time, threading
 import configparser as cfg
 
 from telegram_bot import telegram_bot
+from mobile_de.methods import search
 
 class SEARCH():
     def input_wait(self):
@@ -18,10 +19,10 @@ class SEARCH():
                     except:
                         message = None
                 return messages[-1]
-    
+
     def manufacturer(self):
         return bot.parser.get('messages', 'manufacturer')
-    
+
     def model(self):
         return bot.parser.get('messages', 'model')
 
@@ -29,35 +30,24 @@ class SEARCH():
         from_user = item["message"]["from"]["id"]
         bot.send_message(self.manufacturer(), from_user)
         inp_make = self.input_wait()
-        
+
         update_id = None
         bot.send_message(self.model(), from_user)
         while True:
             inp_model = self.input_wait()
-            print(inp_make, inp_model)
             time.sleep(1)
             if not inp_model == inp_make:
                 break
-        
+
         bot.send_message("Working, please wait...", from_user)
 
-        chat_input = [inp_make, inp_model]
-        for i in range(9):
-            chat_input.append("")
-        filename = search(os.getcwd(), chat_input)
-    
-        data_lists = []
-        for ditem in data:
-            for i in range(len(ditem)):
-                try:
-                    data_lists[i].append(ditem[i])
-                except:
-                    data_lists.append([])
-                    data_lists[i].append(ditem[i])
+        chat_input = [inp_make, inp_model, '', '', '', '', '', '']
+        data = search(chat_input)
 
-        ind = data_lists[6].index(max(data_lists[6]))
-        print(data_lists[0][ind])
-        bot.send_message("Here is the best listing I could find: "+data_lists[0][ind], from_user)
+        scores = [d[5] for d in data]
+        hind = scores.index(max(scores))
+
+        bot.send_message("Here is the best listing I could find: " + data[hind][0], from_user)
 
 if __name__=='__main__':
     bot = telegram_bot()
