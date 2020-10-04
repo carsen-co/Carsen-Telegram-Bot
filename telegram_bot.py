@@ -6,9 +6,9 @@ import configparser as cfg
 CONFIG_FILE = "config.cfg"
 
 class telegram_bot():
-    
-    def __init__(self, config):
-        self.parser = cfg.ConfigParser(CONFIG_FILE)
+    def __init__(self):
+        self.parser = cfg.ConfigParser()
+        self.parser.read(CONFIG_FILE)
         self.token = self.read_token_from_config()
         self.base = "https://api.telegram.org/bot{}/".format(self.token)
 
@@ -18,7 +18,7 @@ class telegram_bot():
             url = url + "&offset={}".format(offset + 1)
         response = requests.get(url)
         return json.loads(response.content)
-    
+
     def send_message(self, message, chat_id):
         url = self.base + "sendMessage?chat_id={}&text={}".format(chat_id, message)
         if message is not None:
