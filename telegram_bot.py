@@ -8,10 +8,10 @@ CONFIG_FILE = "config.cfg"
 class telegram_bot():
     
     def __init__(self, config):
-        self.token = self.read_token_from_config(config)
+        self.parser = cfg.ConfigParser(CONFIG_FILE)
+        self.token = self.read_token_from_config()
         self.base = "https://api.telegram.org/bot{}/".format(self.token)
-        self.parser = cfg.ConfigParser()
-        
+
     def get_updates(self, offset = None):
         url = self.base + "getUpdates?timeout=100"
         if offset:
@@ -24,7 +24,7 @@ class telegram_bot():
         if message is not None:
             requests.get(url)
 
-    def read_token_from_config(self, config):
+    def read_token_from_config(self):
         return self.parser.get('credentials', 'token')
 
     def error_msg(self):
