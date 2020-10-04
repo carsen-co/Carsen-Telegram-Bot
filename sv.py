@@ -1,19 +1,13 @@
 
-import os
-import csv
-import time
-import threading
+import time, threading
 import configparser as cfg
 
 from telegram_bot import telegram_bot
-
-CONFIG_FILE =  "config.cfg"
 
 class SEARCH():
     def input_wait(self):
         while True:
             updates = bot.get_updates(offset = update_id)
-            print(updates)
             updates = updates["result"]
             if updates:
                 messages = []
@@ -26,10 +20,10 @@ class SEARCH():
                 return messages[-1]
     
     def manufacturer(self):
-        return parser.get('search', 'manufacturer')
+        return bot.parser.get('messages', 'manufacturer')
     
     def model(self):
-        return parser.get('search', 'model')
+        return bot.parser.get('messages', 'model')
 
     def __init__(self):        
         from_user = item["message"]["from"]["id"]
@@ -51,14 +45,7 @@ class SEARCH():
         for i in range(9):
             chat_input.append("")
         filename = search(os.getcwd(), chat_input)
-
-        maindir = os.getcwd()
-        os.chdir("./csv files")
-        with open(filename, mode="r", newline='') as datafile:
-            datareader = csv.reader(datafile)
-            data = list(datareader)
-            data.pop(0)
-        
+    
         data_lists = []
         for ditem in data:
             for i in range(len(ditem)):
@@ -72,11 +59,8 @@ class SEARCH():
         print(data_lists[0][ind])
         bot.send_message("Here is the best listing I could find: "+data_lists[0][ind], from_user)
 
-        os.remove(filename)
-        os.chdir(maindir)
-
 if __name__=='__main__':
-    bot = telegram_bot(CONFIG_FILE)
+    bot = telegram_bot()
     update_id = None
 
     while True:
@@ -89,20 +73,12 @@ if __name__=='__main__':
             for item in updates:
                 update_id = item["update_id"]
                 from_user = item["message"]["from"]["id"]
-                try:
-                    message = item["message"]["text"]
-                    messages.append(message)
-                    if messages[-1].lower() == "search":
-                        thread = threading.Thread(target = SEARCH, args = (bot))
-                        thread.start()
-                        thread.join()
-                    elif stspam != 1:
-                        stspam = 1
-                        reply = bot.start_message()
-                        bot.send_message(reply, from_user)
-
-                except Exception as e:
-                    print(e)
-                    message = None
-                    reply = bot.error_msg()
-                    bot.send_message(reply, from_user)
+                message = item["message"]["text"]
+                messages.append(message)
+                if messages[-1].lower() == "search":
+                    thread = threading.Thread(target = SEARCH, args = ())
+                    thread.start()
+                    thread.join()
+                elif stspam != 1:
+                    stspam = 1
+                    bot.send_message(bot.start_message(), from_user)
