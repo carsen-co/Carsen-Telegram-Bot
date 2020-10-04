@@ -5,16 +5,12 @@ import time
 import threading
 import configparser as cfg
 
-from search_module import search
 from telegram_bot import telegram_bot
 
-global msg_cfg
-msg_cfg =  "messages.cfg"
-
+CONFIG_FILE =  "config.cfg"
 
 class SEARCH():
-    
-    def input_wait(self, msg_cfg):
+    def input_wait(self):
         while True:
             updates = bot.get_updates(offset = update_id)
             print(updates)
@@ -29,25 +25,21 @@ class SEARCH():
                         message = None
                 return messages[-1]
     
-    def manufacturer(self, msg_cfg):
-        parser = cfg.ConfigParser()
-        parser.read(msg_cfg)
+    def manufacturer(self):
         return parser.get('search', 'manufacturer')
     
-    def model(self, msg_cfg):
-        parser = cfg.ConfigParser()
-        parser.read(msg_cfg)
+    def model(self):
         return parser.get('search', 'model')
 
-    def __init__(self, msg_cfg):        
+    def __init__(self):        
         from_user = item["message"]["from"]["id"]
-        bot.send_message(self.manufacturer(msg_cfg), from_user)
-        inp_make = self.input_wait(msg_cfg)
+        bot.send_message(self.manufacturer(), from_user)
+        inp_make = self.input_wait()
         
         update_id = None
-        bot.send_message(self.model(msg_cfg), from_user)
+        bot.send_message(self.model(), from_user)
         while True:
-            inp_model = self.input_wait(msg_cfg)
+            inp_model = self.input_wait()
             print(inp_make, inp_model)
             time.sleep(1)
             if not inp_model == inp_make:
@@ -84,7 +76,7 @@ class SEARCH():
         os.chdir(maindir)
 
 if __name__=='__main__':
-    bot = telegram_bot("config.cfg")
+    bot = telegram_bot(CONFIG_FILE)
     update_id = None
 
     while True:
@@ -101,7 +93,7 @@ if __name__=='__main__':
                     message = item["message"]["text"]
                     messages.append(message)
                     if messages[-1].lower() == "search":
-                        thread = threading.Thread(target = SEARCH, args = ("messages.cfg",))
+                        thread = threading.Thread(target = SEARCH, args = (bot))
                         thread.start()
                         thread.join()
                     elif stspam != 1:
