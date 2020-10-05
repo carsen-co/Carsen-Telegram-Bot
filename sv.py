@@ -6,19 +6,17 @@ from telegram_bot import telegram_bot
 from mobile_de.methods import search
 
 class SEARCH():
-    def input_wait(self):
+    def input_wait(self, offset_update):
+        update_id = offset_update
         while True:
             updates = bot.get_updates(offset = update_id)
             updates = updates["result"]
             if updates:
-                messages = []
                 for item in updates:
-                    try:
-                        message = item["message"]["text"]
-                        messages.append(message)
-                    except:
-                        message = None
-                return messages[-1]
+                    update_id = item["update_id"]
+                    from_user = item["message"]["from"]["id"]
+                    message = item["message"]["text"]
+                    return message, update_id
 
     def manufacturer(self):
         return bot.parser.get('messages', 'manufacturer')
@@ -26,18 +24,12 @@ class SEARCH():
     def model(self):
         return bot.parser.get('messages', 'model')
 
-    def __init__(self):        
-        from_user = item["message"]["from"]["id"]
+    def __init__(self, make_entry_update):            
         bot.send_message(self.manufacturer(), from_user)
-        inp_make = self.input_wait()
+        inp_make, model_entry_update = self.input_wait(make_entry_update)
 
-        update_id = None
         bot.send_message(self.model(), from_user)
-        while True:
-            inp_model = self.input_wait()
-            time.sleep(1)
-            if not inp_model == inp_make:
-                break
+        inp_model, sample_entry_update = self.input_wait(model_entry_update)
 
         bot.send_message("Working, please wait...", from_user)
 
@@ -66,7 +58,7 @@ if __name__=='__main__':
                 message = item["message"]["text"]
                 messages.append(message)
                 if messages[-1].lower() == "search":
-                    thread = threading.Thread(target = SEARCH, args = ())
+                    thread = threading.Thread(target = SEARCH, args = (update_id, ))
                     thread.start()
                     thread.join()
                 elif stspam != 1:
