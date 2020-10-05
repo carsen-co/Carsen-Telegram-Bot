@@ -3,7 +3,7 @@ import time, threading
 import configparser as cfg
 
 from telegram_bot import telegram_bot
-from mobile_de.methods import search
+from mobile_de.methods import surface_search
 
 class SEARCH():
     def input_wait(self, offset_update):
@@ -34,12 +34,11 @@ class SEARCH():
         bot.send_message("Working, please wait...", from_user)
 
         chat_input = [inp_make, inp_model, '', '', '', '', '', '']
-        data = search(chat_input)
+        data = surface_search(chat_input)
 
         scores = [d[5] for d in data]
-        hind = scores.index(max(scores))
 
-        bot.send_message("Here is the best listing I could find: " + data[hind][0], from_user)
+        bot.send_message("Here is the best listing I could find: " + data[scores.index(max(scores))][0], from_user)
 
 if __name__=='__main__':
     bot = telegram_bot()
