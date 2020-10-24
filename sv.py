@@ -16,6 +16,8 @@ class SEARCH():
                     update_id = item["update_id"]
                     from_user = item["message"]["from"]["id"]
                     message = item["message"]["text"]
+                    if message.lower() == "blank":
+                        message = ""
                     return message, update_id
 
     def manufacturer(self):
@@ -24,12 +26,12 @@ class SEARCH():
     def model(self):
         return bot.parser.get('messages', 'model')
 
-    def __init__(self, make_entry_update):            
+    def __init__(self, entry_update):            
         bot.send_message(self.manufacturer(), from_user)
-        inp_make, model_entry_update = self.input_wait(make_entry_update)
+        inp_make, entry_update = self.input_wait(entry_update)
 
         bot.send_message(self.model(), from_user)
-        inp_model, sample_entry_update = self.input_wait(model_entry_update)
+        inp_model, entry_update = self.input_wait(entry_update)
 
         bot.send_message("Working, please wait...", from_user)
 
