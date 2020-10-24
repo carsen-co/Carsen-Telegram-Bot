@@ -20,22 +20,20 @@ class SEARCH():
                         message = ""
                     return message, update_id
 
-    def manufacturer(self):
-        return bot.parser.get('messages', 'manufacturer')
-
-    def model(self):
-        return bot.parser.get('messages', 'model')
-
     def __init__(self, entry_update):            
-        bot.send_message(self.manufacturer(), from_user)
+        bot.send_message(bot.parser.get('messages', 'manufacturer'), from_user)
         inp_make, entry_update = self.input_wait(entry_update)
 
-        bot.send_message(self.model(), from_user)
+        bot.send_message(bot.parser.get('messages', 'model'), from_user)
         inp_model, entry_update = self.input_wait(entry_update)
+
+        bot.send_message(bot.parser.get('messages', 'budget'), from_user)
+        inp_budget, entry_update = self.input_wait(entry_update)
+        inp_budget = [int(inp_budget)-(int(inp_budget)/10), int(inp_budget)+(int(inp_budget)/10)]
 
         bot.send_message("Working, please wait...", from_user)
 
-        chat_input = [inp_make, inp_model, '', '', '', '', '', '']
+        chat_input = [inp_make, inp_model, inp_budget[0], inp_budget[1], '', '', '', '']
         data = surface_search(chat_input)
 
         scores = [d[5] for d in data]
