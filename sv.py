@@ -29,7 +29,10 @@ class SEARCH():
 
         bot.send_message(bot.parser.get('messages', 'budget'), from_user)
         inp_budget, entry_update = self.input_wait(entry_update)
-        inp_budget = [int(inp_budget)-(int(inp_budget)/10), int(inp_budget)+(int(inp_budget)/10)]
+        if inp_budget == "":
+            inp_budget = ["", ""]
+        else:
+            inp_budget = [int(inp_budget)-(int(inp_budget)/10), int(inp_budget)+(int(inp_budget)/10)]
 
         bot.send_message("Working, please wait...", from_user)
 
@@ -38,7 +41,8 @@ class SEARCH():
 
         scores = [d[5] for d in data]
 
-        bot.send_message("Here is the best listing I could find: " + data[scores.index(max(scores))][0], from_user)
+        best = data[scores.index(max(scores))]
+        bot.send_message("Here is the best listing I could find:\n" + best[1] + "\n" + best[0], from_user)
 
 if __name__=='__main__':
     bot = telegram_bot()
