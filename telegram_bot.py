@@ -7,7 +7,7 @@ CONFIG_FILE = "config.cfg"
 
 class telegram_bot():
     def __init__(self):
-        self.parser = cfg.ConfigParser()
+        self.parser = cfg.RawConfigParser()
         self.parser.read(CONFIG_FILE)
         self.token = self.read_token_from_config()
         self.base = "https://api.telegram.org/bot{}/".format(self.token)
