@@ -16,7 +16,7 @@ class SEARCH:
                     update_id = item["update_id"]
                     from_user = item["message"]["from"]["id"]
                     message = item["message"]["text"]
-                    if message.lower() == "blank":
+                    if message.lower() == "blank" or message.lower() == "b":
                         message = ""
                     return message, update_id
 
@@ -46,7 +46,7 @@ class SEARCH:
 
         best = data[scores.index(max(scores))]
         bot.send_message(
-            "Here is the best listing I could find:\n" + best[1] + "\n" + best[0],
+            "Here is the best listing found:\n" + best[1] + "\n" + best[0],
             from_user,
         )
 
@@ -67,7 +67,7 @@ if __name__ == "__main__":
                 from_user = item["message"]["from"]["id"]
                 message = item["message"]["text"]
                 messages.append(message)
-                if messages[-1].lower() == "search":
+                if messages[-1].lower() == "search" or messages[-1].lower() == "s":
                     thread = threading.Thread(target=SEARCH, args=(update_id,))
                     thread.start()
                     thread.join()
